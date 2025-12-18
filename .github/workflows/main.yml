@@ -49,6 +49,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          sparse-checkout: |
+            docker-compose_nginx.yml
+          sparse-checkout-cone-mode: false
           clean: true
 
       - name: docker login
