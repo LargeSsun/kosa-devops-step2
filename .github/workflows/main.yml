@@ -56,5 +56,17 @@ jobs:
 
       - name: pull docker image
         run: docker pull hyunhojang/devops_step2:v1.0
+
+      - name: run docker container
+        run: |
+          docker stop devops_step2 || true
+          docker rm devops_step2 || true
+          docker run -d -p 8080:8080 --name devops_step2_container hyunhojang/devops_step2:v1.0
+      
+      - name: check container status
+        run: docker ps -a
+      
+      - name: cleanup old images
+        run: docker image prune -f
         
       
