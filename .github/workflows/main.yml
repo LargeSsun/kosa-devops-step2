@@ -42,54 +42,56 @@ jobs:
       - name: save docker image to hub
         run: docker push hyunhojang/devops_step2:v1.0
 
-      - name: Upload setting files
-        uses: actions/upload-artifact@v4
-        with:
-          name: setting-files
-          path: |
-            docker-compose_nginx.yml
-            nginx/nginx.conf
-      - name: clean source code
-        if: always()
-        run: |
-          rm -rf ${{github.workspace}}/*
-          docker image prune -f
+      #- name: Upload setting files
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: setting-files
+      #    path: |
+      #      docker-compose_nginx.yml
+      #      nginx/nginx.conf
+      #- name: clean source code
+      #  if: always()
+      #  run: |
+      #    rm -rf ${{github.workspace}}/*
+      #    docker image prune -f
         
   deploy:
     needs: build
     name: Deploy
     runs-on: [self-hosted, label-jhh-1]
     steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          sparse-checkout: |
-#            docker-compose_nginx.yml
-#            nginx/nginx.conf
-#          sparse-checkout-cone-mode: false
-#          clean: true
-
-      - name: Download setting files
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v3
         with:
-          name: setting-files
-          path: .
+          sparse-checkout: |
+            docker-compose_nginx.yml
+            nginx/nginx.conf
+          sparse-checkout-cone-mode: false
+          clean: true
 
-      - name: docker login
-        #run: docker login -u hyunhojang -p${{secrets.DOCKER_PASSWORD}}
-        #plz plz
-        uses: docker/login-action@v1
-        with:
-          username: hyunhojang
-          password: ${{secrets.DOCKER_PASSWORD}}
+      #- name: Download setting files
+      #  uses: actions/download-artifact@v4
+      #  with:
+      #    name: setting-files
+      #    path: .
 
-      - name: pull docker image
-        run: docker pull hyunhojang/devops_step2:v1.0
+      #- name: docker login
+      #  run: docker login -u hyunhojang -p${{secrets.DOCKER_PASSWORD}}
+      #  uses: docker/login-action@v1
+      #  with:
+      #    username: hyunhojang
+      #    password: ${{secrets.DOCKER_PASSWORD}}
 
-      - name: run docker container
-        run: docker compose -f docker-compose_nginx.yml up -d
-      
-      - name: check container status
-        run: docker ps -a
+      #- name: pull docker image
+      #  run: docker pull hyunhojang/devops_step2:v1.0
+
+      #- name: run docker container
+      #  run: docker compose -f docker-compose_nginx.yml up -d
+
+      - name: copy file to managed server and run
+        run: |
+          scp ./docker-compose_nginx.yml aws
+          scp -r ./nginx/nginx.conf aws
+          ssh aws ./run.sh > /dev/null
       
       - name: cleanup old images
         run: docker image prune -f
