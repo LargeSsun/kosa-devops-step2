@@ -16,11 +16,15 @@ services:
 
   app1:
     image: hyunhojang/devops_step2:v1.0
+    environment:
+      - APP_NAME=app1
     networks:
       - my_bridge_network
 
   app2:
     image: hyunhojang/devops_step2:v1.0
+    environment:
+      - APP_NAME=app2
     networks:
       - my_bridge_network
 
