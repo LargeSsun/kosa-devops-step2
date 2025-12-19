@@ -41,19 +41,33 @@ jobs:
       
       - name: save docker image to hub
         run: docker push hyunhojang/devops_step2:v1.0
+
+      - name: Upload setting files
+        uses: actions/upload-artifact@v3
+        with:
+          name: setting-files
+          path: |
+            docker-compose_nginx.yml
+            nginx/nginx.conf
         
   deploy:
     needs: build
     name: Deploy
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v3
+#      - uses: actions/checkout@v3
+#        with:
+#          sparse-checkout: |
+#            docker-compose_nginx.yml
+#            nginx/nginx.conf
+#          sparse-checkout-cone-mode: false
+#          clean: true
+
+      - name: Download setting files
+        uses: actions/download-artifact@v3
         with:
-          sparse-checkout: |
-            docker-compose_nginx.yml
-            nginx/nginx.conf
-          sparse-checkout-cone-mode: false
-          clean: true
+          name: setting-files
+          path: .
 
       - name: docker login
         #run: docker login -u hyunhojang -p${{secrets.DOCKER_PASSWORD}}
