@@ -89,8 +89,8 @@ jobs:
 
       - name: copy file to managed server and run
         run: |
-          scp ./docker-compose_nginx.yml aws:~
-          scp -r ./nginx/nginx.conf aws:~
+          scp ./docker-compose_nginx.yml aws:~/docker-compose_nginx.yml
+          scp -r ./nginx/nginx.conf aws:~/nginx/nginx.conf
           ssh aws ./run.sh > /dev/null
       
       - name: cleanup old images
