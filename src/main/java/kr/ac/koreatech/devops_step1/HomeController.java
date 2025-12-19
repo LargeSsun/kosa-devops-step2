@@ -19,6 +19,6 @@ public class HomeController {
     public String index(Model model) {
         model.addAttribute("name", appName);
         log.info("hello world");
-        return "index.html";
+        return "index";
     }
 }
